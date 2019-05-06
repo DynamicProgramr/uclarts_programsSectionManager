@@ -380,7 +380,10 @@ jQuery(function()
                         }
                         
                         alert(responseMessage);
-                        jQuery("#modify_carat_title").val("");
+                        jQuery("#modify_carat_title").val("");  // delete input from text field
+                        jQuery("#modify_carat_position").val("default"); // should set select back to default (first position)
+                        // want to run the 'save order' functionality now. this is necessary because the previous func did not reorder in the db (this seems like the most efficiant way to code it now)
+                        setTimeout(function(){jQuery("#save_custom_carat_order").click();}, 3000);
                     }
                     else if(response.type == "fail")
                     {
@@ -538,7 +541,7 @@ jQuery(function()
 
     });  // end click event for 'save_carat_settings'
     
-    // jQuery(".customCaratDelete_btn").click(function(e) <- becauses some carat items may be appended after document load, this will not work. those carats do not get the click event
+    // jQuery(".customCaratDelete_btn").click(function(e) <- because some carat items may be appended after document load, this will not work. those carats do not get the click event
     jQuery(".customCarat_sortable").on("click", ".customCaratDelete_btn", function(e)
 	{
         e.preventDefault();
@@ -568,6 +571,8 @@ jQuery(function()
                     // delete the child from the unordered list
                     jQuery("li[data-custom_id='" + dbId + "']").remove();
                     alert(responseMessage);
+                    // want to run the 'save order' functionality now. this is necessary because the previous func did not reorder in the db (this seems like the most efficiant way to code it now)
+                    setTimeout(function(){jQuery("#save_custom_carat_order").click();}, 3000);
                 }
                 else if(response.type == "fail")
                 {
