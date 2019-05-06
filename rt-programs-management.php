@@ -2,8 +2,8 @@
 	/**
 	* Plugin Name: Programs Section Management
 	* Plugin URI: http://gr8-code.com
-	* Description: This plugin allows custom management of the Programs pages.
-	* Version: 0.2.4.9
+	* Description: This plugin allows custom management of the Programs pages and the program carat sub-section.
+	* Version: 0.3
 	* Author: Russell Thompson
 	* Author URI: http://gr8-code.com
 	* License: GPL2
@@ -17,12 +17,13 @@
 	 | 0.2.4.1 - 02/13/2019 add check to make sure programs listed are all of "program_type" = "our"
 	 | 0.2.4.2 - 02/22/2019 add 'export to csv' functionality
 	 | 0.2.4.3 - 02/27/2019 add 'display start date' to the programs dropdown lists
-     	 | 0.2.4.4 - 03/11/2019 fix the display of programs and related woocommerce order items
-     	 | 0.2.4.5 - 03/31/2019 change the way the CE functionality works - make CE choice a dropdown of all CE products, change CE hours as well
-     	 | 0.2.4.6 - 03/31/2019 roster - subtract discounts from each buyers total for order
-     	 | 0.2.4.7 - 03/31/2019 roster - change the CEs so that they are only those associated with the program of the roster
-     	 | 0.2.4.8 - 04/09/2019 roster - change the way the 'promo30' discount stuff works. add code to make sure the mat'l item for the given program is included. also, change the way 'total' works with the promo30 discount
-     	 | 0.2.4.9 - 04/17/2019 roster - add new functionality to process coupons and use only when their criteria is meet for current roster
+     | 0.2.4.4 - 03/11/2019 fix the display of programs and related woocommerce order items
+     | 0.2.4.5 - 03/31/2019 change the way the CE functionality works - make CE choice a dropdown of all CE products, change CE hours as well
+     | 0.2.4.6 - 03/31/2019 roster - subtract discounts from each buyers total for order
+     | 0.2.4.7 - 03/31/2019 roster - change the CEs so that they are only those associated with the program of the roster
+     | 0.2.4.8 - 04/09/2019 roster - change the way the 'promo30' discount stuff works. add code to make sure the mat'l item for the given program is included. also, change the way 'total' works with the promo30 discount
+     | 0.2.4.9 - 04/17/2019 roster - add new functionality to process coupons and use only when their criteria is meet for current roster
+     | 0.3 - 05/05/2019 completely change the way the carats work.  Remove 'default' and 'custom' and just put all in one list.
 	 */
 
     use SimpleExcel\SimpleExcel; // for use with export to excel / CSV file see 'function generate_csv()'
@@ -62,9 +63,11 @@
 															"parent" => "Parent Program Page"),
 											"public" => true,
 											"menu_position" => 5, // puts it below posts, to position below pages use 20
-											"supports" => array(	"title",
-																"comments",
-																"thumbnail",),
+                                            "supports" => array(	"title",
+                                                                    "author",
+                                                                    "comments",
+                                                                    "thumbnail",
+                                                                ),
 											"taxonomies" => array(""),
 											"has_archive" => true)
 						);
@@ -1378,18 +1381,7 @@
 		$link_ajaxDeleteCustomCarat = admin_url("admin-ajax.php?action=delete_custom_carat&nonce=".$nonce);
 		$link_ajaxEditCustomCarat = admin_url("admin-ajax.php?action=edit_custom_carat&nonce=".$nonce);
 
-		$defaultCarat_sql = "SELECT * FROM wp_fits_progmng_carats WHERE carat_role = 'default' ORDER BY carat_order";
-		$getDefaultCarats = $wpdb->get_results($defaultCarat_sql);
-
-		if($getDefaultCarats != NULL)
-		{
-			foreach ($getDefaultCarats AS $theDefaultCaratItem)
-			{
-				$defaultCarat_list_items .= "<li class=\"ui-state-default default-draggable\" data-default_id=\"".$theDefaultCaratItem->carat_id."\" data-default_position=\"".$theDefaultCaratItem->carat_order."\"><span class=\"ui-icon ui-icon-arrowthick-2-n-s\"></span>".$theDefaultCaratItem->carat_title."</li>";
-			}
-		}
-
-		$customCarat_sql = "SELECT * FROM wp_fits_progmng_carats WHERE carat_role = 'custom' ORDER BY carat_order";
+		$customCarat_sql = "SELECT * FROM wp_fits_progmng_carats ORDER BY carat_order";
 		$getCustomCarats = $wpdb->get_results($customCarat_sql);
 
 		if($getCustomCarats != NULL)
@@ -1398,17 +1390,25 @@
 			{
 				foreach ($getCustomCarats AS $theCustomCaratItem)
 				{
-					$customCarat_list_items .= "<li class=\"ui-state-default custom-draggable\" data-custom_id=\"".$theCustomCaratItem->carat_id."\" data-custom_position=\"".$theCustomCaratItem->carat_order."\"><span class=\"ui-icon ui-icon-arrowthick-2-n-s\"></span>".$theCustomCaratItem->carat_title."<span class=\"ui-icon ui-icon-trash carat-delete customCaratDelete_btn\" style=\"cursor: pointer;\"></span> <span class=\"ui-icon ui-icon-pencil carat-edit customCaratEdit_btn\" style=\"cursor: pointer;\"></span></li>";
+                    // for now (05/05/2019), I do not want the default carats to be editable or delete-able
+                    if($theCustomCaratItem->carat_role !== "default")
+                    {
+                        $customCarat_list_items .= "<li class=\"ui-state-default custom-draggable\" data-custom_id=\"".$theCustomCaratItem->carat_id."\" data-custom_position=\"".$theCustomCaratItem->carat_order."\"><span class=\"ui-icon ui-icon-arrowthick-2-n-s\"></span>".$theCustomCaratItem->carat_title."<span class=\"ui-icon ui-icon-trash carat-delete customCaratDelete_btn\" style=\"cursor: pointer;\"></span> <span class=\"ui-icon ui-icon-pencil carat-edit customCaratEdit_btn\" style=\"cursor: pointer;\"></span></li>";
+                    }
+                    else
+                    {
+                        $customCarat_list_items .= "<li class=\"ui-state-default custom-draggable\" data-custom_id=\"".$theCustomCaratItem->carat_id."\" data-custom_position=\"".$theCustomCaratItem->carat_order."\"><span class=\"ui-icon ui-icon-arrowthick-2-n-s\"></span>".$theCustomCaratItem->carat_title."</li>";
+                    }
 				}
 			}
 			else
 			{
-				$customCarat_list_items = "<li>There are no custom carats yet.</li>";
+				$customCarat_list_items = "<li>Carat data not returned.</li>";
 			}
 		}
 		else
 		{
-			$customCarat_list_items = "<li>There are no custom carats.</li>";
+			$customCarat_list_items = "<li>Data call failed for carat list.</li>";
 		}
 
 		?>
@@ -1418,24 +1418,17 @@
 						<table style="width: 100%; border-collapse: collapse;">
 							<tr>
 								<td style="width: 50%; padding: 10px; vertical-align: top;">
-									<label for="defaultCarat_select">Default Carats</label><br />
-									<span id="defaultCarat_message"></span>
-									<ul class="defaultCarat_sortable">
-										<?php //print $defaultCarat_list_items; ?>
-									</ul>
-									<br />
-									<div id="default_carat_message"></div>
-									<!-- <a href="<?php //echo $link_ajaxSaveCaratOrder; ?>" id="save_carat_settings" name="save_carat_settings" class="button button-primary button-large" data-nonce="<?php echo $nonce; ?>" type="submit">Save Default Carat Order</a> -->
-								</td>
-								<td style="width: 50%; padding: 10px; vertical-align: top;">
-									<label for="customCarat_select">Custom Carats</label><br />
+                                <label for="customCarat_select">Custom Carats</label><br />
 									<span id="customCarat_message"></span>
 									<ul class="customCarat_sortable">
 										<?php print $customCarat_list_items; ?>
 									</ul>
 									<br />
 									<div id="custom_carat_message"></div>
-									<a href="<?php echo $link_ajaxSaveCaratOrder; ?>" id="save_custom_carat_order" name="save_custom_carat_order" class="button button-primary button-large" data-nonce="<?php echo $nonce; ?>" type="submit">Save Custom Carat Order</a>
+									<a href="<?php echo $link_ajaxSaveCaratOrder; ?>" id="save_custom_carat_order" name="save_custom_carat_order" class="button button-primary button-large" data-nonce="<?php echo $nonce; ?>" type="submit">Save Carat Order</a>
+								</td>
+								<td style="width: 50%; padding: 10px; vertical-align: top;">
+									&nbsp;
 								</td>
 							</tr>
 							<tr>
@@ -1460,7 +1453,7 @@
 													<td style="width: 40%;">
 														<label for="modify_carat_position">Carat Order</label><br />
 														<select id="modify_carat_position" name="modify_carat_position">
-															<option value="">Default Position</option>
+															<option value="default">Default Position</option>
 															<option value="1">1</option>
 															<option value="2">2</option>
 															<option value="3">3</option>
@@ -1476,6 +1469,16 @@
 															<option value="13">13</option>
 															<option value="14">14</option>
 															<option value="15">15</option>
+                                                            <option value="16">16</option>
+															<option value="17">17</option>
+															<option value="18">18</option>
+															<option value="19">19</option>
+															<option value="20">20</option>
+															<option value="21">21</option>
+															<option value="22">22</option>
+															<option value="23">23</option>
+															<option value="24">24</option>
+															<option value="25">25</option>
 														</select>
 													</td>
 												</tr>
@@ -1483,7 +1486,7 @@
 													<td colspan="2" style="padding-top: 15px;">
 														<input type="hidden" id="modify_carat_id" name="modify_carat_id" value="add" />
 														<input type="hidden" id="modify_carat_role" name="modify_carat_role" value="custom" />
-														<button id="modify_carat_btn" name="modify_carat_btn" class="button button-primary button-large" data-nonce="<?php echo $nonce; ?>" type="button">Add New</button>
+														<button id="modify_carat_btn" name="modify_carat_btn" class="button button-primary button-large" data-nonce="<?php echo $nonce; ?>" type="button">Add New Carat</button>
 													</td>
 												</tr>
 										</form>
@@ -1532,7 +1535,7 @@
 			die(); // always end script with this when using AJAX / JSON or a 0 / -1 will get appended to the end of your string
 		}
 		
-		$desiredCaratOrder = $_REQUEST['caratOrder'] + 10;
+		$desiredCaratOrder = $_REQUEST['caratOrder'];
 		
 		$saveResult = $wpdb->insert(
 			"wp_fits_progmng_carats",
@@ -1606,14 +1609,16 @@
 
 		for ($x = 0; $x < count($passed_orderArray); $x++)
 		{
-			if($_REQUEST['role'] == "custom")
-			{
-				$caratOrder = $x + 11; // want to make sure the custom carates are always saved with numbers higher than default carats
-			}
-			else
-			{
-				$caratOrder = $x + 1;
-			}
+            // 05/05/2019 - the 'role' is no longer relevant, all carats are listed together
+            // if($_REQUEST['role'] == "custom")
+			// {
+			// 	$caratOrder = $x + 11; // want to make sure the custom carates are always saved with numbers higher than default carats
+			// }
+			// else
+			// {
+			// 	$caratOrder = $x + 1;
+            // }
+            $caratOrder = $x + 1;
 			$theData = array("carat_order" => $caratOrder);
 			$theWhere = array("carat_id" => $passed_orderArray[$x]);
 			$theFormat = array("%d");
@@ -2281,22 +2286,17 @@
 					</table>
 					<hr />
 					<h3>Carat Section</h3>
+					Enter information for each of the caret sections in the editors below.  If there is no information, simply leave that editor blank.  When the Program Pages are assembled, sections without information will be skipped (will not be displayed on the public-facing page).<br />
+					<table id="form-table-3" name="form-table-3" class="form-table">
 						<?php
-							// for now, carats are going to be limited to 25
-							for($x = 1; $x <= 25; $x++)
+                            // 05-06-2019 this was changed so that 'carat role' was removed.  all carats are now retrieved and stored in '$defaultCaratArray'
+                            $defaultCaratArray = getCaratItems($program_page->ID);
+                            $caratTotalAvailable = count($defaultCaratArray);
+
+                            for($x = 1; $x <= $caratTotalAvailable; $x++)
 							{
 								$positionOptions .= "<option value=\"".$x."\">".$x."</option>";
 							}
-						?>
-					Enter information for each of the caret sections in the editors below.  If there is no information, simply leave that editor blank.  When the Program Pages are assembled, sections without information will be skipped (will not be displayed on the public-facing page).<br />
-					<table id="form-table-3" name="form-table-3" class="form-table">
-						<tr>
-							<td colspan="2">
-								<h4>Default Carats</h4>
-							</td>
-						</tr>
-						<?php
-							$defaultCaratArray = getCaratItems("default", $program_page->ID);
 
 							/*
 							// for testing
@@ -2337,45 +2337,7 @@
 							foreach($defaultCaratArray AS $key => $value)
 							{
 
-								$currentSettings = array(     "textarea_name" => $value['name'],
-																"textarea_rows" => 10);
-								
-								print "   <tr valign=\"top\">
-												<td style=\"padding-bottom: 0px !important;\">
-													<h3>".$value['title']."</h3>
-												</td>
-												<td style=\"padding-bottom: 0px !important;\">
-													<select id=\"".$value['name']."Position\" name=\"".$value['name']."Position\" style=\"float: right;\">
-														<option value=\"".$value['position']."\" selected>".$value['position']."</option>
-														".$positionOptions."
-													</select>
-												</td>
-											</tr>
-											<tr valign=\"top\">
-												<td colspan=\"2\" style=\"padding-top: 0px !important;\">";
-								wp_editor($value['content'], $value['name'], $currentSettings);
-								print "        </td>
-											</tr>";
-							
-								unset($currentSettings);
-							}
-						?>
-						<tr>
-							<td colspan="2">
-								<hr />
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								<h4>Custom Carats</h4>
-							</td>
-						</tr>
-						<?php
-							$customCaratArray = getCaratItems("custom", $program_page->ID);
-
-							foreach($customCaratArray AS $key => $value)
-							{
-								$currentSettings = array(     "textarea_name" => $value['name'],
+								$currentSettings = array(       "textarea_name" => $value['name'],
 																"textarea_rows" => 10);
 								
 								print "   <tr valign=\"top\">
@@ -2489,14 +2451,15 @@
 
     add_action("wp_ajax_ceu_AJAX", "ceu_AJAX");
 	
-	function getCaratItems($theRole, $programId)
+    // 05/06/2019 changed this to remove the carat role (default or custom)
+    function getCaratItems($programId)
 	{
 		// 11/2018 to 01/2019 - this section has to do with the new carat functionality
 		// get the custom carats for one array and the default carats for another
 
 		global $wpdb;
 
-		$caratItemNames_sqlStatement = "SELECT * FROM wp_fits_progmng_carats WHERE carat_role = '".$theRole."' ORDER BY carat_order DESC";
+		$caratItemNames_sqlStatement = "SELECT * FROM wp_fits_progmng_carats ORDER BY carat_order DESC";
 		$getProgramCaratItemNames = $wpdb->get_results($caratItemNames_sqlStatement, ARRAY_A);
 		$caratItemsArray = array();
 
