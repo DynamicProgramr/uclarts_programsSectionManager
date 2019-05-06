@@ -5,5 +5,7 @@ This is a custom plugin written for UCLArts and Healing needs.  I doubt it will 
 
 At the time this repo was created, the plugin version was 0.2.4.9 and is running on WP v4.0.24.  The plugin has not been tested with versions of WP higher than that.
 
+This version: 0.3 - Includes all 'New Carat System' changes.
+
 Russ Thompson
 Freelance I.T. Solutions
