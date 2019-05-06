@@ -17,12 +17,12 @@
 	 | 0.2.4.1 - 02/13/2019 add check to make sure programs listed are all of "program_type" = "our"
 	 | 0.2.4.2 - 02/22/2019 add 'export to csv' functionality
 	 | 0.2.4.3 - 02/27/2019 add 'display start date' to the programs dropdown lists
-     | 0.2.4.4 - 03/11/2019 fix the display of programs and related woocommerce order items
-     | 0.2.4.5 - 03/31/2019 change the way the CE functionality works - make CE choice a dropdown of all CE products, change CE hours as well
-     | 0.2.4.6 - 03/31/2019 roster - subtract discounts from each buyers total for order
-     | 0.2.4.7 - 03/31/2019 roster - change the CEs so that they are only those associated with the program of the roster
-     | 0.2.4.8 - 04/09/2019 roster - change the way the 'promo30' discount stuff works. add code to make sure the mat'l item for the given program is included. also, change the way 'total' works with the promo30 discount
-     | 0.2.4.9 - 04/17/2019 roster - add new functionality to process coupons and use only when their criteria is meet for current roster
+     	 | 0.2.4.4 - 03/11/2019 fix the display of programs and related woocommerce order items
+     	 | 0.2.4.5 - 03/31/2019 change the way the CE functionality works - make CE choice a dropdown of all CE products, change CE hours as well
+     	 | 0.2.4.6 - 03/31/2019 roster - subtract discounts from each buyers total for order
+     	 | 0.2.4.7 - 03/31/2019 roster - change the CEs so that they are only those associated with the program of the roster
+     	 | 0.2.4.8 - 04/09/2019 roster - change the way the 'promo30' discount stuff works. add code to make sure the mat'l item for the given program is included. also, change the way 'total' works with the promo30 discount
+     	 | 0.2.4.9 - 04/17/2019 roster - add new functionality to process coupons and use only when their criteria is meet for current roster
 	 */
 
     use SimpleExcel\SimpleExcel; // for use with export to excel / CSV file see 'function generate_csv()'
