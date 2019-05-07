@@ -17,12 +17,12 @@
 	 | 0.2.4.1 - 02/13/2019 add check to make sure programs listed are all of "program_type" = "our"
 	 | 0.2.4.2 - 02/22/2019 add 'export to csv' functionality
 	 | 0.2.4.3 - 02/27/2019 add 'display start date' to the programs dropdown lists
-     | 0.2.4.4 - 03/11/2019 fix the display of programs and related woocommerce order items
-     | 0.2.4.5 - 03/31/2019 change the way the CE functionality works - make CE choice a dropdown of all CE products, change CE hours as well
-     | 0.2.4.6 - 03/31/2019 roster - subtract discounts from each buyers total for order
-     | 0.2.4.7 - 03/31/2019 roster - change the CEs so that they are only those associated with the program of the roster
-     | 0.2.4.8 - 04/09/2019 roster - change the way the 'promo30' discount stuff works. add code to make sure the mat'l item for the given program is included. also, change the way 'total' works with the promo30 discount
-     | 0.2.4.9 - 04/17/2019 roster - add new functionality to process coupons and use only when their criteria is meet for current roster
+     	 | 0.2.4.4 - 03/11/2019 fix the display of programs and related woocommerce order items
+     	 | 0.2.4.5 - 03/31/2019 change the way the CE functionality works - make CE choice a dropdown of all CE products, change CE hours as well
+     	 | 0.2.4.6 - 03/31/2019 roster - subtract discounts from each buyers total for order
+     	 | 0.2.4.7 - 03/31/2019 roster - change the CEs so that they are only those associated with the program of the roster
+     	 | 0.2.4.8 - 04/09/2019 roster - change the way the 'promo30' discount stuff works. add code to make sure the mat'l item for the given program is included. also, change the way 'total' works with the promo30 discount
+     	 | 0.2.4.9 - 04/17/2019 roster - add new functionality to process coupons and use only when their criteria is meet for current roster
 	 */
 
     use SimpleExcel\SimpleExcel; // for use with export to excel / CSV file see 'function generate_csv()'
@@ -271,15 +271,16 @@
 				<div class="wrap">
 					<div id="search_form_container">
 						<form id="narrowProgramList" name="narrowProgramList" action="" method="post">
-							<h2>Generate Program Rosters</h2>
+							<h2>Program Rosters</h2>
 							<div style="background-color: #ffffff; padding: 1px 5px 1px 5px; margin-bottom: 10px;">
-								<p><strong>In the dropdownbelow (Program List...)</strong> you will find a list of ALL programs in the system that have a current status of 'publish.'  They are listed in reverse order by creation date - most recent program created is at the top. If you wish, you may narrow the list by entering a date range in the section just below and clicking the 'Narrow Program List' button.</p>
+								<p>By default, the drop-down menu below lists all published programs in the system. Program titles are listed in order of their ad creation date, with the most recent program created at the top.</p>
+                                				<p>To Narrow the listing field, enter a date range in the section below and then click on the "Narrow Program List" button.</p>
 							</div>
 							<label for="startMonth">Start Date:</label>&nbsp;&nbsp;<select id="startMonth" name="startMonth"><?php echo $select_month; ?></select>&nbsp;&nbsp;<select id="startDay" name="startDay"><?php echo $select_day; ?></select>&nbsp;&nbsp;<select id="startYear" name="startYear"><?php echo $select_year; ?></select>&nbsp;&nbsp;To&nbsp;&nbsp;<label for="endMonth">End Date:</label>&nbsp;&nbsp;<select id="endMonth" name="endMonth"><?php echo $select_month; ?></select>&nbsp;&nbsp;<select id="endDay" name="endDay"><?php echo $select_day; ?></select>&nbsp;&nbsp;<select id="endYear" name="endYear"><?php echo $select_year; ?></select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $link_ajaxNarrowProgramList; ?>" id="narrow_programs_list" name="narrow_programs_list" class="button button-primary button-large" data-nonce="<?php echo $nonce; ?>" type="submit">Narrow Program List</a><br />
 							<br />
 						</form>
 						<form id="getProgram" name="getProgram" action="" method="post">
-							<label for="program_select">To see a roster for a program, choose the program from the dropdown and click 'Show Roster.'</label><br />
+							<label for="program_select">To view a program roster, select the program title from the drop-down menu and click on the "Show Roster" button.</label><br />
 							<span id="program_list_message"></span>
 							<select id="program_select" name="program_select">
 								<option value="">Program list...</option>
